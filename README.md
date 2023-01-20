@@ -12,6 +12,6 @@ D & E & F ---> |gene IDs| G[[Python_script]]
 G --> |unique gene IDs| H[(Panther)]
 H--> I[Overpresentation]
 
-click C href "http://annoq.org/"
-click H href "http://pantherdb.org/"
+click C "http://annoq.org/"
+click H "http://pantherdb.org/"
 ```
