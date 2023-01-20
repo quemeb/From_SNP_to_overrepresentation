@@ -2,8 +2,6 @@
 
 Workflow for mapping SNPs to rsID to performing overrepresentation analysis 
 
-securityLevel = 'loose'
-
 ```mermaid
 flowchart TD
 
@@ -12,8 +10,6 @@ B --> |rsID list| C[(AnnoQ)]
 C --> D{{Annovar}} & E{{SnpEff}} & F{{VEP}}
 D & E & F ---> |gene IDs| G[[Python_script]] 
 G --> |unique gene IDs| H[(Panther)]
-H--> I[Overpresentation]
+H --> I[Overpresentation]
 
-click C "http://annoq.org/"
-click H "http://pantherdb.org/"
 ```
