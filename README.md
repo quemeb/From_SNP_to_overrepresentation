@@ -2,6 +2,8 @@
 
 Workflow for mapping SNPs to rsID to performing overrepresentation analysis 
 
+securityLevel = 'loose'
+
 ```mermaid
 flowchart TD
 
