@@ -10,7 +10,7 @@ B --> |rsID list| C[(AnnoQ)]
 C --> D{{Annovar}} & E{{SnpEff}} & F{{VEP}}
 D & E & F ---> |gene IDs| G[[Python_script]] 
 G --> |unique gene IDs| H[(Panther)]
-H --> I[Overpresentation]
+H --> |Fisher's exact|I[Overpresentation]
 
 click C "http://annoq.org/" _blank
 click H "http://pantherdb.org/" _blank
