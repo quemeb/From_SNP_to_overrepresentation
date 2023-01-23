@@ -1,0 +1,104 @@
+---
+title: "vcf_creator"
+output: html_document
+date: 
+---
+
+```{r, prerequisites} 
+#package installation to manage BiomaRt
+
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("biomaRt")
+```
+
+```{r, documentation}
+browseVignettes("biomaRt")
+```
+
+```{r}
+library(biomaRt)
+library(stringr)
+```
+
+```{r, listAttributes}
+#looking up what updatabase to use for mapping
+### the next two lines are only to be run if not working with SNP in 
+### then we need to change databasesfor the 'ensembl'
+#ensembl = useEnsembl(biomart="snps")
+#searchDatasets(mart=ensembl, pattern ="hsapiens")
+ensembl = useEnsembl(biomart="snps", 
+                     dataset = "hsapiens_snp", 
+                     version = "GRCh37") #no need to put version if using latest
+```
+
+```{r, listAttributes}
+#things we want to get back from Ensembl
+rs_ID_get <- function(df){
+  getBM(attributes = c("refsnp_id", "allele", "chr_name","chrom_start", "allele_1", "minor_allele", "minor_allele_freq", "clinical_significance"),
+      filters = "chromosomal_region",
+      values = df,
+      mart = ensembl)
+}
+```
+
+```{r}
+#loading file
+ifile <- file.choose()
+df <- read.csv(ifile)
+
+#preparing data
+snp_pos <- apply(df, 1, paste, collapse = ":")
+rs_ID = data.frame()
+for (i in 1:length(snp_pos)){
+  rs_ID <- rbind(rs_ID, rs_ID_get(snp_pos[i]))
+}
+
+
+rs_ID_clean = data.frame()
+
+rs_ID_clean = data.frame(refsnp_id = character(), allele=character(), chr_name=integer(),chrom_start=integer(), allele_1=character(), minor_allele=character(), minor_allele_freq=integer(), clinical_significance=character())
+
+##cleaning data
+
+#check for all IDs to start w "rs" and have a minor allele
+for (i in 1:length(rs_ID$refsnp_id)){
+  if(str_starts(rs_ID$refsnp_id[i], "rs") && !is.na(rs_ID$minor_allele_freq[i])){
+    rs_ID_clean <- rbind(rs_ID_clean, rs_ID[i,])
+  }
+}
+
+#making sure the numbers match to the input
+l = intersect(df$chr_start, rs_ID_clean$chrom_start)
+
+#seems some SNPs are lost in the process bc they don't have minor allele
+#checking that all SNPS from initial list are in clean list
+dif = setdiff(df$chr_start,l) #should be empty
+
+#finding the missing chrom start and then verifying the rsID makes sense
+for(i in 1:length(dif)){
+  temp = which(rs_ID$chrom_start == dif[i])
+  for(j in 1:length(temp)){
+    if(str_starts(rs_ID$allele[temp[j]], "[:upper:]/[:upper:]") && str_starts(rs_ID$refsnp_id[temp[j]], "rs")){
+      rs_ID_clean <- rbind(rs_ID_clean, rs_ID[temp[j], ])
+    }
+  }
+}
+
+```
+
+## Writing rsID data into files
+Here we create a file only with rsIDs (text) and another as a CSV file with all the data we got back from our Ensembl call
+
+```{r}
+write.table(rs_ID_clean$refsnp_id, "rs_IDs_clean.txt", sep = "\n")
+write.csv(rs_ID_clean, file ="rs_ID_clean.csv")
+
+setdiff(rs_ID_clean$refsnp_id, trial_df$rs_dbSNP151)
+setdiff(rs_ID_clean$chrom_start, trial_df$pos)
+```
+
+
+
+
