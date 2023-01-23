@@ -7,6 +7,7 @@ flowchart TD
 
 A[SNP file] --> B[[R_Script]]
 B --> |rsID list| C[(AnnoQ)]
+Z[rsID list] --> C
 C --> D{{Annovar}} & E{{SnpEff}} & F{{VEP}}
 D & E & F ---> |gene IDs| G[[Python_script]] 
 G --> |unique gene IDs| H[(Panther)]
