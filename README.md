@@ -5,11 +5,11 @@ Workflow for mapping SNPs to rsID to performing overrepresentation analysis
 ```mermaid
 flowchart TD
 
-A[SNP file] --> B[[R_Script]]
-B --> |rsID list| C[(AnnoQ)]
-Z[rsID list] --> C
-C --> D{{Annovar}} & E{{SnpEff}} & F{{VEP}}
-D & E & F ---> |gene IDs| G[[Python_script]] 
+A[SNP file] --> B[[R_Shiny]]
+B --> C[(AnnoQ)]
+Z[rsID list] --> B
+C --> |rsIDs| D{{Annovar}} & E{{SnpEff}} & F{{VEP}}
+D & E & F ---> |gene IDs| G[[R_Shiny]] 
 G --> |unique gene IDs| H[(Panther)]
 H --> |Fisher's exact|I[Overpresentation]
 
