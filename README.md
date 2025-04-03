@@ -5,16 +5,35 @@ Workflow for mapping SNPs to rsID to performing overrepresentation analysis
 ```mermaid
 flowchart TD
 
-A[SNP file] --> B[[R_Shiny]]
-B --> C[(AnnoQ)]
+A[SNP file] --> B[[R Shiny]]
 Z[rsID list] --> B
-C --> |rsIDs| D{{Annovar}} & E{{SnpEff}} & F{{VEP}}
-D & E & F ---> |gene IDs| G[[R_Shiny]] 
-G --> |unique gene IDs| H[(Panther)]
-H --> |Fisher's exact|I[Overpresentation]
+B --> C[(AnnoQ)]
+
+C --> |rsIDs| G{{PEREGRINE}}
+C --> |rsIDs| D{{ANNOVAR}}
+C --> |rsIDs| E{{SnpEff}}
+C --> |rsIDs| F{{VEP}}
+
+D --> J1[Ensembl]
+D --> J2[RefSeq]
+
+E --> J1
+E --> J2
+
+F --> J1
+F --> J2
+
+J1 --> |Gene IDs| K[[R Shiny]]
+J2 --> |Gene IDs| K
+G --> |Gene IDs| K
+
+K --> |unique gene IDs| L[(Panther)]
+L --> |Fisher's exact| M[Overrepresentation]
 
 click C "http://annoq.org/" _blank
-click H "http://pantherdb.org/" _blank
+click L "http://pantherdb.org/" _blank
+
+
 
 ```
 
